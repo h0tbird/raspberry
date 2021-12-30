@@ -20,6 +20,15 @@ RUN cd mqtt-datasource && yarn install && yarn build
 
 FROM grafana/grafana
 
+USER root
+
+ENV GF_PATHS_PLUGINS=/var/lib/grafana-plugins
+
+RUN mkdir -p $GF_PATHS_PLUGINS && \
+    chown -R grafana:472 $GF_PATHS_PLUGINS
+
+USER grafana
+
 COPY --from=plugin-builder /go/mqtt-datasource $GF_PATHS_PLUGINS
 
 ENV GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=grafana-mqtt-datasource
